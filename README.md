@@ -5,13 +5,13 @@
 Para regularizar la materia debera tener el 75% de asistencia.
 Para promocionar debera tener el 100% de asistencia y aprobado con 9 o 10 los parciales.
 
-Para contabilizar la asistencia deberan presentar un trabajo practico por semana resolviedo los ejercios que se pinda. 
+Para contabilizar la asistencia deberan presentar un trabajo practico por semana resolviendo los ejercicios que se pida. 
 
 Estos trabajo no contabilizaran para la nota sino solo para la asistencia. 
 
-En dos ocasiones (que seran oportunamente anunciadas) de pedira un trabajo que se consierará un particial. El mismo sera evaluado y habra una recuperacion. 
+En dos ocasiones (que seran oportunamente anunciadas) se pedira un trabajo que se considerará un parcial. El mismo sera evaluado y habra una recuperacion. 
 
-Estos parciales son los que se conseraran (junto con la asistencia) para la promocion de la materia.
+Estos parciales son los que se consideraran (junto con la asistencia) para la promocion de la materia.
 
 
 > [!TIP]
