@@ -1,6 +1,24 @@
 # TP5: *1er Parcial*
 
-Este trabajo cuenta como el `primer parcial`.
+
+Los siguientes alumnos deben recuperar el parcial.
+```
+ 1️⃣2️⃣3️⃣4️⃣5️⃣
+ 🔴🔴🔴🔴🟡  1. 59336  Bulan Georgieff, Alexandre              
+ 🟢🟢🟢🟢🟡 14. 59059  Soraire, Elías Nicolás                  
+ 🟢🟢🟢🟢🟡 18. 59056  Villafañe, Lucas Gastón                 
+```
+> 
+> Deben corregir el mismo para que pase todos los test y enviarlos antes del 
+> **Miercoles 9 de Octubre a las 23:59hs**.
+> 
+
+------
+------
+
+
+## Este trabajo cuenta como el `primer parcial`.
+
 >  
 > Es un `trabajo individual` y puede usar todos los recursos a su disposición, incluyendo el material del curso y búsquedas en internet para resolver dudas. 
 
