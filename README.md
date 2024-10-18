@@ -22,6 +22,14 @@ Los ejercicios son los siguientes:
 ## Fecha de entrega
 - Sabado 19 de octubre de 2024 a las 23:59 hs
 
+> **IMPORTANTE:** 
+> 
+> Esta es la clase que se tenia que 
+> dar el jueves que por dificultados por todos conocida no
+> se pudo dar. 
+>
+> https://youtu.be/GhUWlk2UbEs
+>
 ```
  🟢🟢🟢🟢🟡 14. 59059  Soraire, Elías Nicolás                  
 ```
