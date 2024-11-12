@@ -13,7 +13,6 @@ epocas = st.sidebar.slider('Cantidad de épocas', 10, 10000, 100)
 neuronas_ocultas = st.sidebar.slider('Cantidad de neuronas en la capa oculta', 1, 100, 5)
 boton_entrenar = st.sidebar.button("Entrenar")
 
-
 def cargar_datos():
     datos = pd.read_csv('ventas.csv')
 
@@ -59,8 +58,6 @@ def entrenar_red(modelo, X_entrenamiento, y_entrenamiento, tasa_aprendizaje, epo
         barra_progreso.progress(progreso, text=f'{progress_text} {progreso*100:.1f}%')
     
     return modelo, historial_perdida
-
-
 datos, (ventas_min, ventas_max), (dias_min, dias_max) = cargar_datos()
 
 st.subheader("Datos Originales de Ventas")
@@ -71,7 +68,6 @@ ax.set_ylabel('Ventas')
 ax.grid(True)
 ax.legend()
 st.pyplot(fig)
-
 
 if boton_entrenar:
     X_entrenamiento = torch.tensor(datos['dia_normalizado'].values, dtype=torch.float32).view(-1, 1)
