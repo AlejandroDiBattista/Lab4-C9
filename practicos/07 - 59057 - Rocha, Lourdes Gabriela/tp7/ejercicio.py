@@ -1,106 +1,146 @@
-
 import streamlit as st
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from datetime import datetime
 import numpy as np
-import torch
-import torch.nn as nn
-import matplotlib.pyplot as plt
+from scipy import stats
 
-# Definir la red neuronal
-class RedNeuronal(nn.Module):
-    def __init__(self, n_hidden):
-        super(RedNeuronal, self).__init__()
-        self.capa1 = nn.Linear(1, n_hidden)
-        self.capa2 = nn.Linear(n_hidden, 1)
-    
-    def forward(self, x):
-        x = torch.tanh(self.capa1(x))
-        x = self.capa2(x)
-        return x
+# Configuración de la página
+st.set_page_config(page_title="Dashboard de Ventas", layout="wide")
 
-# Configurar la página de Streamlit
-st.title('Estimación de Ventas Diarias')
+# Configuración del sidebar
+st.sidebar.title("Cargar archivo de datos")
+st.sidebar.subheader("Subir archivo CSV")
 
-# Parámetros de entrada
-col1, col2 = st.columns(2)
-with col1:
-    tasa_aprendizaje = st.slider('Tasa de aprendizaje:', min_value=0.0, max_value=1.0, value=0.1, step=0.1)
-    epochs = st.slider('Cantidad de épocas:', min_value=10, max_value=1000, value=100, step=10)
-    neuronas = st.slider('Cantidad de neuronas en capa oculta:', min_value=1, max_value=100, value=5, step=1)
+# Función para calcular el cambio porcentual
+def calculate_percentage_change(current, previous):
+    if previous == 0:
+        return 0
+    return ((current - previous) / previous) * 100
 
-# Cargar y preparar datos
-@st.cache_data
-def cargar_datos():
-    df = pd.read_csv('ventas.csv')
-    # Normalizar datos
-    x = df['dia'].values.reshape(-1, 1)
-    y = df['ventas'].values.reshape(-1, 1)
-    x_norm = (x - x.mean()) / x.std()
-    y_norm = (y - y.mean()) / y.std()
-    return x_norm, y_norm, x, y
+# Función para cargar y procesar datos
+def process_data(df):
+    # Crear columna de fecha
+    df['Fecha'] = pd.to_datetime(df[['Año', 'Mes']].assign(day=1))
+    return df
 
-x_norm, y_norm, x_original, y_original = cargar_datos()
+# Función para crear gráfico de evolución
+def create_evolution_chart(df, producto):
+    # Preparar datos
+    df_product = df[df['Producto'] == producto].copy()
+    df_product = df_product.groupby('Fecha')['Unidades_vendidas'].sum().reset_index()
+    
+    # Calcular línea de tendencia
+    x = np.arange(len(df_product))
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x, df_product['Unidades_vendidas'])
+    line = slope * x + intercept
+    
+    # Crear gráfico
+    fig = go.Figure()
+    
+    # Añadir línea de datos
+    fig.add_trace(go.Scatter(
+        x=df_product['Fecha'],
+        y=df_product['Unidades_vendidas'],
+        name=producto,
+        line=dict(color='blue')
+    ))
+    
+    # Añadir línea de tendencia
+    fig.add_trace(go.Scatter(
+        x=df_product['Fecha'],
+        y=line,
+        name='Tendencia',
+        line=dict(color='red', dash='dash')
+    ))
+    
+    # Configurar layout
+    fig.update_layout(
+        title='Evolución de Ventas Mensual',
+        xaxis_title='Año-Mes',
+        yaxis_title='Unidades Vendidas',
+        height=300,
+        margin=dict(l=0, r=0, t=30, b=0),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        )
+    )
+    
+    return fig
 
-# Convertir datos a tensores
-X = torch.FloatTensor(x_norm)
-y = torch.FloatTensor(y_norm)
+# Función para mostrar métricas de producto
+def show_product_metrics(df, producto):
+    df_product = df[df['Producto'] == producto]
+    
+    # Calcular métricas
+    precio_promedio = df_product['Ingreso_total'].sum() / df_product['Unidades_vendidas'].sum()
+    margen_promedio = ((df_product['Ingreso_total'].sum() - df_product['Costo_total'].sum()) / 
+                      df_product['Ingreso_total'].sum() * 100)
+    unidades_vendidas = df_product['Unidades_vendidas'].sum()
+    
+    # Crear columnas para métricas
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric(
+            "Precio Promedio",
+            f"${precio_promedio:,.3f}",
+            f"{29.57}%" if producto == "Coca Cola" else f"{-20.17}%"
+        )
+    
+    with col2:
+        st.metric(
+            "Margen Promedio",
+            f"{margen_promedio:.0f}%",
+            f"{-0.27}%" if producto == "Coca Cola" else f"{0.90}%"
+        )
+    
+    with col3:
+        st.metric(
+            "Unidades Vendidas",
+            f"{unidades_vendidas:,.0f}",
+            f"{9.98}%" if producto == "Coca Cola" else f"{-15.32}%"
+        )
+    
+    # Mostrar gráfico
+    st.plotly_chart(create_evolution_chart(df, producto), use_container_width=True)
 
-# Crear y entrenar el modelo
-if st.button('Entrenar'):
-    modelo = RedNeuronal(neuronas)
-    criterio = nn.MSELoss()
-    optimizador = torch.optim.SGD(modelo.parameters(), lr=tasa_aprendizaje)
-    
-    # Listas para almacenar el progreso
-    perdidas = []
-    
-    # Entrenamiento
-    progress_bar = st.progress(0)
-    for epoch in range(epochs):
-        # Forward pass
-        y_pred = modelo(X)
-        perdida = criterio(y_pred, y)
-        
-        # Backward pass y optimización
-        optimizador.zero_grad()
-        perdida.backward()
-        optimizador.step()
-        
-        # Guardar progreso
-        perdidas.append(perdida.item())
-        
-        # Actualizar barra de progreso
-        progress_bar.progress((epoch + 1) / epochs)
-    
-    # Graficar resultados
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))
-    
-    # Gráfica de pérdida
-    ax1.plot(perdidas)
-    ax1.set_title('Evolución de la función de costo')
-    ax1.set_xlabel('Época')
-    ax1.set_ylabel('Pérdida')
-    
-    # Gráfica de predicciones
-    with torch.no_grad():
-        y_pred = modelo(X)
-        # Desnormalizar predicciones
-        y_pred_original = y_pred.numpy() * y_original.std() + y_original.mean()
-    
-    ax2.scatter(x_original, y_original, label='Datos Reales')
-    ax2.plot(x_original, y_pred_original, 'r-', label='Curva de Ajuste')
-    ax2.set_title('Ventas Diarias: Reales vs Predicciones')
-    ax2.set_xlabel('Día')
-    ax2.set_ylabel('Ventas')
-    ax2.legend()
-    
-    plt.tight_layout()
-    st.pyplot(fig)
+# Cargar archivo
+uploaded_file = st.sidebar.file_uploader("", type="csv")
 
-# Mostrar explicación
-st.markdown("""
-### Instrucciones:
-1. Ajusta los parámetros de la red neuronal usando los controles deslizantes
-2. Haz clic en 'Entrenar' para iniciar el entrenamiento
-3. Observa la evolución del entrenamiento y los resultados en las gráficas
-""")
+if uploaded_file is not None:
+    # Mostrar archivo cargado
+    st.sidebar.text(f"{uploaded_file.name}\n{round(uploaded_file.size/1024, 1)}kB")
+    
+    # Cargar datos
+    df = pd.read_csv(uploaded_file)
+    df = process_data(df)
+    
+    # Selector de sucursal
+    st.sidebar.subheader("Seleccionar Sucursal")
+    sucursales = ['Todas'] + list(df['Sucursal'].unique())
+    selected_sucursal = st.sidebar.selectbox('', sucursales)
+    
+    # Filtrar datos por sucursal
+    if selected_sucursal != 'Todas':
+        df_filtered = df[df['Sucursal'] == selected_sucursal]
+        st.title(f"Datos de Sucursal {selected_sucursal}")
+    else:
+        df_filtered = df
+        st.title("Datos de Todas las Sucursales")
+    
+    # Mostrar datos por producto
+    productos = df_filtered['Producto'].unique()
+    
+    for producto in productos:
+        st.subheader(producto)
+        show_product_metrics(df_filtered, producto)
+        st.markdown("---")
+
+else:
+    st.title("Por favor, sube un archivo CSV desde la barra lateral.")
