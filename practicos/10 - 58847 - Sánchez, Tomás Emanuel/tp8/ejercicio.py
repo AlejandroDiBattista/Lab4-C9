@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from io import StringIO
 import requests
 
+url="https://tp9-sancheztomas.streamlit.app/"
+
 def configurar_pagina():
     st.set_page_config(
         page_title="Análisis de Ventas",
