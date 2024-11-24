@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+#url del repositorio deployado
+#URL = `https://tp8-58869.streamlit.app`
+
 def mostrar_informacion_alumno():
     with st.container(border=True):
         st.markdown('**Legajo:** 58869')
