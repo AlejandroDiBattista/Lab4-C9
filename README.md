@@ -63,6 +63,7 @@
 **Para promocionar la materia, tanto los resultados como la presentación deben estar correctos.**
 
 **Con respecto a los resultados...**
+
 Los que deben recuperar tienen la cantidad de unidades correcta, pero el precio y el margen están mal calculados. 
 Tomen los siguientes valores como referencia <small>(✦ Valores redondeados)</small>:
 |Producto|Precio ✦|Unidades|
@@ -72,6 +73,7 @@ Tomen los siguientes valores como referencia <small>(✦ Valores redondeados)</s
 |Pepsi|$ 2.512|1.440.104|
 
 **Con respecto a la presentación...**
+
 En la presentación debe reflejar la imagen de referencia.
 - No debe mostrar ninguna tabla de datos.
 - No debe tener ningún HTML o CSS para personalizar la presentación.
