@@ -13,8 +13,8 @@
 * `02` | **58842**  | Fernández Licciardi, Mauricio
 * `03` | **59310**  | Paz Berrondo, Nahuel Agustín
 * `04` | **58679**  | Pereyra, Franco Sebastián
-* `06` | **59313**  | Pisentte, Juan Pablo
 * `05` | **58869**  | Pérez, Enzo Matías
+* `06` | **59313**  | Pisentte, Juan Pablo
 * `08` | **58879**  | Ruiu, Andres
 * `12` | **59320**  | Sbrocco, Micaela
 * `15` | **59110**  | Soria, Joaquín
@@ -29,15 +29,15 @@
 
 ##### Debe corregir resultados y presentación 
 * `07` | **59057**  | Rocha, Lourdes Gabriela
-* `14` | **59059**  | Soraire, Elías Nicolás
 * `10` | **58847**  | Sánchez, Tomás Emanuel
+* `14` | **59059**  | Soraire, Elías Nicolás
 * `18` | **59056**  | Villafañe, Lucas Gastón
 * `21` | **59055**  | Saravia, Franco Nicolas
 
 #### No presentaron <small>(3)</small>
-* `20` | **59186**  | Roldan, Jesús
 * `11` | **59933**  | Saucedo, Lucas Nahuel
 * `13` | **59568**  | Serrano, Lorenzo
+* `20` | **59186**  | Roldan, Jesús
 
 ## ¿Cómo recuperar el trabajo?
 **Para promocionar la materia, tanto los resultados como la presentación deben estar correctos.**
