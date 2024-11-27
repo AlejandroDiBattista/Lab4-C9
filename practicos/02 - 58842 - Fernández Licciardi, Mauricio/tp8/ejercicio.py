@@ -63,7 +63,7 @@ def graficar_evolucion(datos, producto, sucursal="Todas"):
     coef = np.polyfit(X, y, 1)
     tendencia = np.polyval(coef, X)
 
-    fig, ax = plt.subplots(figsize=(30, 20))
+    fig, ax = plt.subplots()
     ax.plot(datos_producto['Fecha'], y, label=producto, color="#2271b3", linestyle="-", linewidth=2) 
     ax.plot(datos_producto['Fecha'], tendencia, label="Tendencia", linestyle="--", color="red", linewidth=1.5)
 
@@ -112,7 +112,7 @@ if archivo is not None:
 
     for _, row in resumen.iterrows():
         with st.container(border=True):            
-            col1, col2 = st.columns([1, 1])
+            col1, col2 = st.columns([.25, .75])
 
             with col1:
                 st.markdown(f"## {row['Producto']}")  

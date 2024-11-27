@@ -10,6 +10,7 @@
 
 ### Aprobados (9) 
 * `01` | **59336**  | Bulan Georgieff, Alexandre
+* `02` | **58842**  | Fernández Licciardi, Mauricio
 * `03` | **59310**  | Paz Berrondo, Nahuel Agustín
 * `04` | **58679**  | Pereyra, Franco Sebastián
 * `06` | **59313**  | Pisentte, Juan Pablo
@@ -22,7 +23,6 @@
 ### Recuperar (8)
 
 ##### Debe corregir los resultados 
-* `02` | **58842**  | Fernández Licciardi, Mauricio
 * `09` | **59073**  | Ruiz, Tomás Federico
 * `16` | **58846**  | Sosa, Franco Maximiliano
 * `19` | **59314**  | Yapura, Ramón Alejandro
@@ -32,8 +32,6 @@
 * `14` | **59059**  | Soraire, Elías Nicolás
 * `10` | **58847**  | Sánchez, Tomás Emanuel
 * `18` | **59056**  | Villafañe, Lucas Gastón
-
-#### Desaprobados <small>(1)</small>
 * `21` | **59055**  | Saravia, Franco Nicolas
 
 #### No presentaron <small>(3)</small>
