@@ -1,4 +1,4 @@
-## Comisión 7 [33]
+## Comisión 9 [21]
 
 
 #### Resultados de la evaluación del segundo parcial.
@@ -8,50 +8,38 @@
 > La recuperación debe ser *realizada y subida adecuadamente* hasta el **jueves al mediodía**.
             
 
-### Aprobados (12) 
-* `01` | **55936**  | Arcos, Lucas Isaias
-* `02` | **55547**  | Cabrera, Pablo Daniel
-* `04` | **59312**  | Cancino, Ignacio Matías
-* `09` | **59251**  | Mamani, Daniel Fernando
-* `32` | **59250**  | Martinez, Ignacio
-* `11` | **59043**  | Medina, Elias Manuel
-* `14` | **55606**  | Meza, Julieta Noemí
-* `16` | **58826**  | Moyano, Luján
-* `18` | **59358**  | Nieva Pastoriza, Gonzalo
-* `25` | **58934**  | Quiroga Gil, Juan Ignacio
-* `26` | **58935**  | Quiroga Gil, Santiago José
-* `31` | **59047**  | Torres, Francisco Gabriel
+### Aprobados (9) 
+* `01` | **59336**  | Bulan Georgieff, Alexandre
+* `03` | **59310**  | Paz Berrondo, Nahuel Agustín
+* `04` | **58679**  | Pereyra, Franco Sebastián
+* `06` | **59313**  | Pisentte, Juan Pablo
+* `05` | **58869**  | Pérez, Enzo Matías
+* `08` | **58879**  | Ruiu, Andres
+* `12` | **59320**  | Sbrocco, Micaela
+* `15` | **59110**  | Soria, Joaquín
+* `17` | **59074**  | Teseyra, Juan Ignacio
 
-### Recuperar (15)
+### Recuperar (8)
 
 ##### Debe corregir los resultados 
-* `07` | **58700**  | Heredia, Solana
-* `12` | **59194**  | Medina, María Josefina
-* `19` | **59162**  | Nuñez Orqueta, Luis Alberto
-* `23` | **58699**  | Perea Fernández, Facundo
-
-##### Debe corregir la presentacion 
-* `03` | **58769**  | Callejas, Máximo Facundo
-* `05` | **59348**  | Conort, Ignacio
-* `08` | **59174**  | Maceda, Tiziano Gabriel
-* `15` | **59134**  | Molina, Tomás Agustín
-* `33` | **58728**  | Montivero Lizondo, Martino
-* `22` | **58794**  | Patti, Mauro Luciano
-* `27` | **58912**  | Quiroga, Leandro Iván
-* `28` | **59072**  | Rodríguez, Ana Paula
+* `02` | **58842**  | Fernández Licciardi, Mauricio
+* `09` | **59073**  | Ruiz, Tomás Federico
+* `16` | **58846**  | Sosa, Franco Maximiliano
+* `19` | **59314**  | Yapura, Ramón Alejandro
 
 ##### Debe corregir resultados y presentación 
-* `06` | **59158**  | Corral, Luciano
-* `10` | **58702**  | Manzano, Gonzalo Javier
-* `17` | **59044**  | Naranjo Sosa, Lucas
+* `07` | **59057**  | Rocha, Lourdes Gabriela
+* `14` | **59059**  | Soraire, Elías Nicolás
+* `10` | **58847**  | Sánchez, Tomás Emanuel
+* `18` | **59056**  | Villafañe, Lucas Gastón
 
-#### No presentaron <small>(6)</small>
-* `13` | **55939**  | Mena, Iván Leandro
-* `20` | **59049**  | Ortiz, Matías Nicolás
-* `21` | **59490**  | Parra, Ana Belén
-* `24` | **55489**  | Pérez, Sofía Micaela
-* `30` | **57586**  | Roldán, Julieta del Rocío
-* `29` | **55776**  | Roldán Vicecci, Camila Lucía
+#### Desaprobados <small>(1)</small>
+* `21` | **59055**  | Saravia, Franco Nicolas
+
+#### No presentaron <small>(3)</small>
+* `20` | **59186**  | Roldan, Jesús
+* `11` | **59933**  | Saucedo, Lucas Nahuel
+* `13` | **59568**  | Serrano, Lorenzo
 
 ## ¿Cómo recuperar el trabajo?
 **Para promocionar la materia, tanto los resultados como la presentación deben estar correctos.**
@@ -90,3 +78,4 @@ Los alumnos que deben recuperar deben presentar el trabajo corregido hasta el **
 
 #### Imagen de referencia             
 ![Pantalla Principal](./practicos/enunciados/pantalla1.png)
+            
