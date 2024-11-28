@@ -102,14 +102,13 @@ else:
         
         precio_promedio, margen_promedio, unidades_vendidas, precio_cambio, margen_cambio, unidades_cambio = calcular_metricas(df, producto)
         
-        with col1:
+        with st.container(border=True):
             st.subheader(producto)
-            mostrar_metrica_personalizada("Precio Promedio", f"${precio_promedio:.2f}", f"{precio_cambio:.2f}%")
-            mostrar_metrica_personalizada("Margen Promedio", f"{margen_promedio:.2f}%", f"{margen_cambio:.2f}%")
-            mostrar_metrica_personalizada("Unidades Vendidas", f"{unidades_vendidas:,}", f"{unidades_cambio:.2f}%")
+            with col1:
+                st.metric("Precio Promedio", f"${precio_promedio:.2f}", f"{precio_cambio:.2f}%")
+                st.metric("Margen Promedio", f"{margen_promedio:.2f}%", f"{margen_cambio:.2f}%")
+                st.metric("Unidades Vendidas", f"{unidades_vendidas:,}", f"{unidades_cambio:.2f}%")
+            with col2:
+                fig = mostrar_grafico(df, producto)
+                st.pyplot(fig)
         
-        with col2:
-            fig = mostrar_grafico(df, producto)
-            st.pyplot(fig)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
