@@ -3,117 +3,118 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# url = 'https://app-grafica-eftpfygwbnhhyxayty7ray.streamlit.app/'
+## ATENCION Debe colocar la direccion en la que ha sido publicada la aplicacion en la siguiente linea\
+# url = 'https://applab-xvugj6c8zegftvptacsfvw.streamlit.app/'
 
+st.set_page_config(layout="wide", page_title="TP8-GASTON")
 
 def mostrar_informacion_alumno():
-    st.subheader("Información del Alumno")
-    st.markdown("**Legajo:** 59056")
-    st.markdown("**Nombre:** Lucas Gaston Villafañe")
-    st.markdown("**Comisión:** C9")
+    with st.container(border=True):
+        st.markdown('*Legajo:* 59056')
+        st.markdown('*Nombre:* Villafañe Lucas Gaston')
+        st.markdown('*Comisión:* C9')
 
-def calcular_estadisticas(df):
-    estadisticas = df.groupby("Producto").agg({
-        "Ingreso_total": "sum",
-        "Unidades_vendidas": "sum",
-        "Costo_total": "sum"
-    }).reset_index()
-
-    estadisticas["Precio_Promedio"] = estadisticas["Ingreso_total"] / estadisticas["Unidades_vendidas"]
-    estadisticas["Margen_Promedio"] = (estadisticas["Ingreso_total"] - estadisticas["Costo_total"]) / estadisticas["Ingreso_total"]
-    estadisticas["Cambio_Unidades"] = np.random.uniform(-10, 10, len(estadisticas))
-    estadisticas["Cambio_Margen"] = np.random.uniform(-5, 5, len(estadisticas))
-    estadisticas["Cambio_Precio"] = np.random.uniform(-15, 15, len(estadisticas))
-
-    return estadisticas
-
-def filtrar_por_sucursal(df, sucursal):
-    if sucursal != "Todas":
-        return df[df["Sucursal"] == sucursal]
+def procesar_datos(df):
+    df['Precio_promedio'] = df['Ingreso_total'] / df['Unidades_vendidas']
+    df['Margen_promedio'] = (df['Ingreso_total'] - df['Costo_total']) / df['Ingreso_total']
     return df
 
-def generar_grafico(df, producto):
-    datos_producto = df[df["Producto"] == producto]
-    datos_producto = datos_producto.groupby(["Año", "Mes"]).agg({"Unidades_vendidas": "sum"}).reset_index()
+def calcular_metricas_anteriores(df):
+    metricas = ['Precio_promedio', 'Margen_promedio', 'Unidades_vendidas']
+    for metrica in metricas:
+        df[f'{metrica}_anterior'] = df.groupby('Producto')[metrica].shift(1)
+    return df
 
-    datos_producto["Fecha"] = pd.to_datetime(
-        datos_producto["Año"].astype(str) + "-" + datos_producto["Mes"].astype(str)
-    )
+def generar_resumen(df):
+    return df.groupby('Producto').agg({
+        'Precio_promedio': 'mean',
+        'Precio_promedio_anterior': 'mean',
+        'Margen_promedio': 'mean',
+        'Margen_promedio_anterior': 'mean',
+        'Unidades_vendidas': 'sum',
+        'Unidades_vendidas_anterior': 'sum',
+    }).reset_index()
 
-    datos_producto = datos_producto.sort_values("Fecha")
+def crear_grafico(datos_producto):
+    fig, ax = plt.subplots(figsize=(26, 16))
+    
+    ax.plot(datos_producto['Fecha'], datos_producto['Unidades_vendidas'], label=datos_producto['Producto'].iloc[0], color="#2271b3", linestyle="-", linewidth=2)
+    
+    X = np.arange(len(datos_producto))
+    y = datos_producto['Unidades_vendidas'].fillna(0).values
+    coef = np.polyfit(X, y, 1)
+    ax.plot(datos_producto['Fecha'], np.polyval(coef, X), label="Tendencia", linestyle="--", color="red", linewidth=1.5)
+    
+    ax.set_title("Evolución de Ventas Mensual", fontsize=28)
+    ax.set_xlabel("Año", fontsize=24)
+    ax.set_ylabel("Unidades Vendidas", fontsize=24)
+    ax.tick_params(axis='both', which='major', labelsize=22)
+    
+    ax.grid(True, which='major', axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.legend(fontsize=20)
+    
+    plt.tight_layout()
+    return fig
 
-    plt.figure(figsize=(8, 4))
-    plt.plot(datos_producto["Fecha"], datos_producto["Unidades_vendidas"], label=producto, marker='o')
+@st.cache_data
+def cargar_datos(archivo):
+    df = pd.read_csv(archivo)
+    df['Mes'] = df['Mes'].astype(int)
+    df['Año'] = df['Año'].astype(int)
+    df['Fecha'] = pd.to_datetime(df['Año'].astype(str) + '-' + df['Mes'].astype(str) + '-01')
+    return df
 
-    z = np.polyfit(range(len(datos_producto)), datos_producto["Unidades_vendidas"], 1)
-    p = np.poly1d(z)
-    plt.plot(datos_producto["Fecha"], p(range(len(datos_producto))), "r--", label="Tendencia")
+def main():
+    st.sidebar.header("Cargar archivo de datos")
+    archivo = st.sidebar.file_uploader("Subir archivo CSV", type=["csv"])
 
-    plt.title(f"Evolución de Ventas Mensual - {producto}")
-    plt.xlabel("Fecha")
-    plt.ylabel("Unidades Vendidas")
-    plt.legend()
-    plt.grid()
+    if archivo is not None:
+        df = cargar_datos(archivo)
+        df = procesar_datos(df)
+        df = calcular_metricas_anteriores(df)
 
-    return plt
+        sucursales = ["Todas"] + list(df['Sucursal'].unique())
+        sucursal = st.sidebar.selectbox("Seleccionar Sucursal", sucursales)
 
-def generar_flecha_moderno(cambio):
-    color = "green" if cambio > 0 else "red"
-    flecha = "▲" if cambio > 0 else "▼"
-    estilo_flecha = f"color: {color}; font-size: 18px; margin-right: 5px;"
-    estilo_porcentaje = f"color: {color}; font-size: 14px;"
-    return f"""
-        <div style="display: flex; align-items: center; gap: 4px;">
-            <span style="{estilo_flecha}">{flecha}</span>
-            <span style="{estilo_porcentaje}">{abs(cambio):.2f}%</span>
-        </div>
-    """
+        if sucursal != "Todas":
+            df = df[df['Sucursal'] == sucursal]
+            st.header(f"Datos de la {sucursal}")
+        else:
+            st.header("Datos de todas las sucursales")
 
-st.set_page_config(layout="wide", page_title="TP8 - Segundo Parcial")
+        resumen = generar_resumen(df)
 
-st.sidebar.title("Cargar archivo de datos")
-file = st.sidebar.file_uploader("Subir archivo CSV", type=["csv"])
+        for _, row in resumen.iterrows():
+            with st.container(border=True):
+                col1, col2 = st.columns([1, 3])
+                
+                with col1:
+                    st.markdown(f"## {row['Producto']}")
+                    for metrica in ['Precio_promedio', 'Margen_promedio', 'Unidades_vendidas']:
+                        valor_actual = row[metrica]
+                        valor_anterior = row[f'{metrica}_anterior']
+                        delta = ((valor_actual - valor_anterior) / valor_anterior * 100) if valor_anterior else 0
+                        
+                        if metrica == 'Precio_promedio':
+                            valor_formateado = f"${valor_actual:,.0f}".replace(",", ".")
+                        elif metrica == 'Margen_promedio':
+                            valor_formateado = f"{valor_actual * 100:.0f}%"
+                        else:
+                            valor_formateado = f"{int(valor_actual):,}"
+                        
+                        st.metric(
+                            label=metrica.replace('_', ' ').title(),
+                            value=valor_formateado,
+                            delta=f"{delta:.2f}%"
+                        )
+                
+                with col2:
+                    datos_producto = df[df['Producto'] == row['Producto']].sort_values('Fecha')
+                    fig = crear_grafico(datos_producto)
+                    st.pyplot(fig)
+    else:
+        st.header("Por favor, sube un archivo CSV desde la barra lateral.")
+        mostrar_informacion_alumno()
 
-mostrar_informacion_alumno()
-
-if not file:
-    try:
-        st.sidebar.write("")
-    except FileNotFoundError:
-        st.error("No se encontró el archivo 'gaseosas.csv'. Por favor, súbelo manualmente.")
-
-if file:
-    df = pd.read_csv(file)
-
-    sucursales = ["Todas"] + df["Sucursal"].unique().tolist()
-    sucursal_seleccionada = st.sidebar.selectbox("Seleccionar Sucursal", sucursales)
-
-    # Filtrar los datos por sucursal seleccionada
-    df_filtrado = filtrar_por_sucursal(df, sucursal_seleccionada)
-
-    # Calcular estadísticas según los datos filtrados
-    estadisticas = calcular_estadisticas(df_filtrado)
-
-    st.title(f"Datos de {sucursal_seleccionada}")
-
-    for _, row in estadisticas.iterrows():
-        with st.container(border=True):
-            col1, col2 = st.columns([1, 2])
-
-        with col1:
-            st.markdown(f"### {row['Producto']}")
-
-            for label, value, cambio in [
-                ("Precio Promedio", f"${row['Precio_Promedio']:.2f}", row["Cambio_Precio"]),
-                ("Margen Promedio", f"{row['Margen_Promedio']*100:.2f}%", row["Cambio_Margen"]),
-                ("Unidades Vendidas", f"{row['Unidades_vendidas']:,}", row["Cambio_Unidades"]),
-            ]:
-                st.markdown(f"**{label}**")
-                st.markdown(f"<span style='font-size: 24px; color: black;'>{value}</span>", unsafe_allow_html=True)
-                st.markdown(generar_flecha_moderno(cambio), unsafe_allow_html=True)
-
-        with col2:
-            grafico = generar_grafico(df_filtrado, row["Producto"])
-            st.pyplot(grafico)
-else:
-    st.write("Por favor, sube un archivo CSV desde la barra lateral.")
+if __name__ == "__main__":
+    main()
