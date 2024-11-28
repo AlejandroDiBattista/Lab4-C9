@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-url = 'https://tp8-59314.streamlit.app/'
-
 def mostrar_informacion_alumno():
     with st.container(border=True):
         st.markdown('Legajo: 59314')
@@ -34,14 +32,18 @@ def calcular_metricas(df, producto, periodo_anterior, sucursal=None):
     if len(df_producto) == 0:
         return 0, 0, 0, 0, 0, 0
     
-    unidades_vendidas = df_producto['Unidades_vendidas'].sum()
-    if unidades_vendidas == 0:
+    if df_producto[['Unidades_vendidas', 'Ingreso_total', 'Costo_total']].isnull().any().any():
+        st.warning("Se encontraron valores nulos en las columnas necesarias.")
         return 0, 0, 0, 0, 0, 0
-        
-    precio_promedio = df_producto['Ingreso_total'].sum() / unidades_vendidas
     
+    unidades_vendidas = df_producto['Unidades_vendidas'].sum()
     ingreso_total = df_producto['Ingreso_total'].sum()
     costo_total = df_producto['Costo_total'].sum()
+    
+    if unidades_vendidas == 0:
+        precio_promedio = 0
+    else:
+        precio_promedio = (df_producto['Ingreso_total'] / df_producto['Unidades_vendidas']).sum() / len(df_producto)
     
     if ingreso_total == 0:
         margen_promedio = 0
@@ -51,18 +53,13 @@ def calcular_metricas(df, producto, periodo_anterior, sucursal=None):
     df_anterior = df_producto[df_producto['Fecha'] < periodo_anterior]
     if len(df_anterior) > 0:
         ingreso_anterior = df_anterior['Ingreso_total'].sum()
-        costo_anterior = df_anterior['Costo_total'].sum()
         unidades_anterior = df_anterior['Unidades_vendidas'].sum()
         
-        precio_anterior = ingreso_anterior / unidades_anterior
-        
-        if ingreso_anterior == 0:
-            margen_anterior = 0
-        else:
-            margen_anterior = ((ingreso_anterior - costo_anterior) / ingreso_anterior) * 100
+        precio_anterior = ingreso_anterior / unidades_anterior if unidades_anterior != 0 else 0
+        margen_anterior = ((ingreso_anterior - df_anterior['Costo_total'].sum()) / ingreso_anterior) * 100 if ingreso_anterior != 0 else 0
         
         var_precio = ((precio_promedio - precio_anterior) / precio_anterior) * 100 if precio_anterior != 0 else 0
-        var_margen = margen_promedio - margen_anterior  # La diferencia entre márgenes ya está en puntos porcentuales
+        var_margen = margen_promedio - margen_anterior
         var_unidades = ((unidades_vendidas - unidades_anterior) / unidades_anterior) * 100 if unidades_anterior != 0 else 0
     else:
         var_precio = 0
@@ -70,6 +67,7 @@ def calcular_metricas(df, producto, periodo_anterior, sucursal=None):
         var_unidades = 0
     
     return precio_promedio, margen_promedio, unidades_vendidas, var_precio, var_margen, var_unidades
+
 
 def crear_grafico_tendencia(df, producto, sucursal=None):
     from matplotlib.dates import MonthLocator, YearLocator, DateFormatter
