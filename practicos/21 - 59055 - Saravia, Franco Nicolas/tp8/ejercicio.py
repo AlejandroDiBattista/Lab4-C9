@@ -1,84 +1,96 @@
+from matplotlib.dates import MonthLocator
+from matplotlib.ticker import MultipleLocator
 import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
-# ATENCION: Debe colocar la dirección en la que ha sido publicada la aplicación en la siguiente línea
-url = 'https://tp8-saravia-zmvv3xptvq8dacbutwytcz.streamlit.app/'
-
-# Función para mostrar la información del alumno
+#url = 'https://tp8-saravia-zmvv3xptvq8dacbutwytcz.streamlit.app/'
 def mostrar_informacion_alumno():
-    st.markdown("""
-        <div style="border: 2px solid black; padding: 10px;">
-            <p><strong>Legajo:</strong> 59.055</p>
-            <p><strong>Nombre:</strong> Saravia Franco Nicolas</p>
-            <p><strong>Comisión:</strong> C9</p>
-        </div>
-    """, unsafe_allow_html=True)
+    st.write("**Legajo:** 59.055")
+    st.write("**Nombre:** Saravia Franco Nicolas")
+    st.write("**Comisión:** C9")
 
-# Mostrar la información del alumno
-mostrar_informacion_alumno()
+st.sidebar.header("Cargar archivos")
+archivo_subido = st.sidebar.file_uploader("Subir archivo CSV", type="csv")
 
-# Cargar archivo CSV
-st.sidebar.header("Seleccione un archivo CSV")
-uploaded_file = st.sidebar.file_uploader("Seleccione un archivo CSV", type=["csv"])
-
-if uploaded_file is not None:
-    # Leer archivo CSV
-    df = pd.read_csv(uploaded_file)
-
-    # Selección de sucursal en la barra lateral
-    st.sidebar.subheader("Seleccionar Sucursal")
-    sucursales = st.sidebar.selectbox("Seleccione una Sucursal", df['Sucursal'].unique())
-    df_sucursal = df[df['Sucursal'] == sucursales]
-
-    # Mostrar los datos de la sucursal seleccionada
-    st.title(f"Datos de la {sucursales}")
-    st.write(df_sucursal)
-
-    # Calcular resultados por producto
-    resultados = df.groupby("Producto").agg(
-        Precio_Promedio=("Ingreso_total", lambda x: np.sum(x) / np.sum(df.loc[x.index, "Unidades_vendidas"])),
-        Margen_Promedio=("Ingreso_total", lambda x: np.mean((x - df.loc[x.index, "Costo_total"]) / x) * 100),
-        Unidades_Vendidas=("Unidades_vendidas", "sum"),
-    ).reset_index()
-
-    st.write("Resultados por Producto:")
-    st.dataframe(resultados)
-
-    # Mostrar gráfico por cada producto
-    productos = resultados["Producto"].unique()
-    for producto in productos:
-        st.write(f"**{producto}**")
-        producto_data = df[df["Producto"] == producto]
-
-        # Ordenar por Año y Mes
-        producto_data = producto_data.sort_values(by=["Año", "Mes"])
-
-        # Crear un eje temporal basado en Año y Mes
-        eje_temporal = producto_data["Año"].astype(str) + "-" + producto_data["Mes"].astype(str).str.zfill(2)
-
-        # Crear gráfico de unidades vendidas
-        fig, ax = plt.subplots(figsize=(10, 6))
-        ax.plot(
-            eje_temporal,
-            producto_data["Unidades_vendidas"],
-            label="Unidades Vendidas",
-            color="blue",
+if archivo_subido:
+    try:
+        box_seleccionado = st.sidebar.selectbox(
+            "Seleccione Sucursal", ["Todas", "Sucursal Norte", "Sucursal Centro", "Sucursal Sur"]
         )
-        ax.set_xticks(eje_temporal[::max(len(eje_temporal) // 10, 1)])  # Reducir etiquetas si hay muchas
-        ax.set_xticklabels(eje_temporal[::max(len(eje_temporal) // 10, 1)], rotation=45)
-        ax.set_xlabel("Período (Año-Mes)")
-        ax.set_ylabel("Unidades Vendidas")
+        df = pd.read_csv(archivo_subido)
 
-        # Línea de tendencia
-        tendencia = np.polyfit(np.arange(len(producto_data)), producto_data["Unidades_vendidas"], 1)
-        ax.plot(
-            eje_temporal,
-            np.polyval(tendencia, np.arange(len(producto_data))),
-            label="Tendencia",
-            color="red",
-        )
+        if box_seleccionado != "Todas":
+            df = df[df['Sucursal'] == box_seleccionado]
 
-        ax.legend()
-        st.pyplot(fig)
+        st.title(f"Datos de {'Todas las Sucursales' if box_seleccionado == 'Todas' else box_seleccionado}")
+
+        df['Precio Promedio'] = df['Ingreso_total'] / df['Unidades_vendidas']
+        df['Margen Promedio'] = (df['Ingreso_total'] - df['Costo_total']) / df['Ingreso_total']
+        df['Unidades Vendidas'] = df['Unidades_vendidas']
+
+        df['Cambio Precio'] = df.groupby('Producto')['Precio Promedio'].pct_change() * 100
+        df['Cambio Unidades'] = df.groupby('Producto')['Unidades Vendidas'].pct_change() * 100
+
+        df['Cambio Precio'].fillna(0, inplace=True)
+        df['Cambio Unidades'].fillna(0, inplace=True)
+
+        datos = df.groupby('Producto').agg(
+            {
+                'Precio Promedio': 'mean',
+                'Margen Promedio': 'mean',
+                'Unidades Vendidas': 'sum',
+                'Cambio Precio': 'last',
+                'Cambio Unidades': 'last',
+            }
+        ).reset_index()
+
+        datos['Precio Promedio'] = datos['Precio Promedio'].apply(lambda x: np.floor(x * 100) / 100)
+        datos['Margen Promedio'] = datos['Margen Promedio'].apply(lambda x: np.floor(x * 100) / 100)
+
+        for _, row in datos.iterrows():
+            st.divider() 
+            with st.container():
+                col1, col2 = st.columns([1, 3]) 
+
+                with col1:
+                    st.subheader(row['Producto'])
+                    st.metric("Precio Promedio", f"${row['Precio Promedio']:.2f}", f"{row['Cambio Precio']:.2f}%")
+                    st.metric("Margen Promedio", f"{row['Margen Promedio'] * 100:.0f}%", "")
+                    st.metric("Unidades Vendidas", f"{row['Unidades Vendidas']:,}", f"{row['Cambio Unidades']:.2f}%")
+
+                with col2:
+                    df_producto = df[df['Producto'] == row['Producto']]
+                    df_producto['Año-Mes'] = df_producto['Año'].astype(str) + '-' + df_producto['Mes'].astype(str).str.zfill(2)
+                    df_producto['Año-Mes'] = pd.to_datetime(df_producto['Año-Mes'], format='%Y-%m')
+
+                    df_producto["Fecha_Num"] = (df_producto["Año-Mes"] - df_producto["Año-Mes"].min()).dt.days
+                    x = df_producto["Fecha_Num"].values
+                    y = df_producto["Unidades Vendidas"].values
+
+                    m = (np.sum(x * y) - len(x) * np.mean(x) * np.mean(y)) / (np.sum(x**2) - len(x) * np.mean(x)**2)
+                    b = np.mean(y) - m * np.mean(x)
+                    df_producto["Tendencia"] = m * x + b
+
+                    df_producto['Unidades Vendidas Suavizadas'] = df_producto['Unidades Vendidas'].rolling(window=3, center=True).mean()
+
+                    fig, ax = plt.subplots(figsize=(10, 6))
+                    ax.plot(df_producto["Año-Mes"], df_producto["Unidades Vendidas Suavizadas"], label="Suavizado", color="blue", linewidth=1.5)
+                    ax.plot(df_producto["Año-Mes"], df_producto["Tendencia"], label="Tendencia", color="red", linestyle="--", linewidth=1.5)
+
+                    ax.grid(visible=True, which='both', color='gray', linestyle='-', linewidth=0.5, alpha=0.7)
+                    ax.xaxis.set_minor_locator(MonthLocator(interval=1))
+                    ax.yaxis.set_minor_locator(MultipleLocator(10000))
+
+                    ax.set_title("Evolución de Ventas Mensual", fontsize=12, loc='center', pad=20)
+                    ax.set_xlabel("Año-Mes", fontsize=10)
+                    ax.set_ylabel("Unidades Vendidas", fontsize=10)
+
+                    ax.legend()
+                    st.pyplot(fig)
+
+    except Exception as e:
+        st.error(f"Error al procesar el archivo: {e}")
+
+else:
+    mostrar_informacion_alumno()
