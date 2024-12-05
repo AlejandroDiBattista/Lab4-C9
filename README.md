@@ -8,7 +8,7 @@ Las personas que están en condición de _regular_ deberán presentarse a rendir
 
 Por último, las personas que están _libres_ son aquellas que han dejado de cursar.
 
-#### Promocionado
+#### Promocionado (11)
 ```
   1. 59336  Bulan Georgieff, Alexandre
   2. 58842  Fernández Licciardi, Mauricio
@@ -22,7 +22,7 @@ Por último, las personas que están _libres_ son aquellas que han dejado de cur
  17. 59074  Teseyra, Juan Ignacio
  19. 59314  Yapura, Ramón Alejandro
 ```
-#### Promoción en suspenso
+#### Promoción en suspenso (5)
 ```
   7. 59057  Rocha, Lourdes Gabriela
   9. 59073  Ruiz, Tomás Federico
@@ -30,12 +30,12 @@ Por último, las personas que están _libres_ son aquellas que han dejado de cur
  18. 59056  Villafañe, Lucas Gastón
  21. 59055  Saravia, Franco Nicolas
 ```
-#### Regular
+#### Regular (2)
 ```
   4. 58679  Pereyra, Franco Sebastián
  14. 59059  Soraire, Elías Nicolás
 ```
-#### Libre
+#### Libre (3)
 ```
  11. 59933  Saucedo, Lucas Nahuel
  13. 59568  Serrano, Lorenzo
