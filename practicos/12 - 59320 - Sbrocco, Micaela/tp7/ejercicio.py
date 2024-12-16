@@ -42,7 +42,8 @@ def entrenar_red(modelo, X_entrenamiento, y_entrenamiento, tasa_aprendizaje, epo
     historial_perdida = []
 
     progress_text = 'Entrenamiento en progreso...'
-    barra_progreso = st.progress(0, text=progress_text)
+    barra_progreso = st.progress(0)
+    texto_progreso = st.empty()
     
     for epoca in range(epocas):
         modelo.train()
@@ -55,9 +56,11 @@ def entrenar_red(modelo, X_entrenamiento, y_entrenamiento, tasa_aprendizaje, epo
         historial_perdida.append(perdida.item())
         
         progreso = (epoca + 1) / epocas
-        barra_progreso.progress(progreso, text=f'{progress_text} {progreso*100:.1f}%')
+        barra_progreso.progress(progreso)
+        texto_progreso.text(f'{progress_text} {progreso*100:.1f}%')
     
     return modelo, historial_perdida
+
 datos, (ventas_min, ventas_max), (dias_min, dias_max) = cargar_datos()
 
 st.subheader("Datos Originales de Ventas")
